@@ -1,7 +1,8 @@
 package com.example.demo;
 
 
-import org.springframework.amqp.core.FanoutExchange;
+
+import org.springframework.amqp.core.DirectExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -13,23 +14,30 @@ public class Sender {
 	private RabbitTemplate template;
 
 	@Autowired
-	private FanoutExchange fanout;
+	private DirectExchange direct;
 
-	String[]  list = {"sandwitches","pakora","biriyani","roti"};
+	String routingKey = "snax";
+
+	String[]  list = {"s-sandwitches","s-pakora","l-biriyani","l-roti"};
 	
-   
 		public void send() {
-		String routingKey = "";
-		
+		int i =0;
 		for(String message:list) {
-		template.convertAndSend(fanout.getName(), routingKey, message);
-		    System.out.println(" Sent '" + message + "'");
+		
+			
+			if(message.substring(0, 1).equalsIgnoreCase("l")) {
+				this.routingKey="lunch";
+			}
+			
+		template.convertAndSend(direct.getName(), this.routingKey, message.substring(2));
+		    System.out.println(" Sent '" + message.substring(2) + "'");
 		    
 		    try {
 				Thread.sleep(200);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+		    i++;
 		}
 	}
 
