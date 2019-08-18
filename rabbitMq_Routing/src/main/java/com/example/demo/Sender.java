@@ -32,11 +32,6 @@ public class Sender {
 		template.convertAndSend(direct.getName(), this.routingKey, message.substring(2));
 		    System.out.println(" Sent '" + message.substring(2) + "'");
 		    
-		    try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
 		    i++;
 		}
 	}
